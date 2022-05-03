@@ -97,6 +97,19 @@ const optionsModule = {
         }).setVisibleFn(() => {
           return optionsModule.store.getters["isMod"];
         }),
+        new OptionSection({
+          displayName: "Hidden",
+          name: "hidden",
+          options: [
+            new BoolOption({
+              displayName: "Enable Debug Features",
+              name: "enableDebugFeatures",
+              value: false,
+            }),
+          ],
+        }).setVisibleFn(() => {
+          return false;
+        }),
       ],
     };
   },

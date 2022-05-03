@@ -96,6 +96,11 @@ import { useStore } from "vuex";
 import Cookies from "js-cookie";
 import { StompClient } from "@/websocket/stompClient";
 
+import { enableDebug, disableDebug } from "@/modules/debugController";
+
+window.enableDebug = enableDebug;
+window.disableDebug = disableDebug;
+
 //import { hooksSystemSetup } from "@/store/hooks";
 
 //hooksSystemSetup();

@@ -29,6 +29,15 @@
             <a class="dropdown-item" href="#" @click="mute">Mute</a>
             <a class="dropdown-item" href="#" @click="rename">Rename</a>
             <a class="dropdown-item" href="#" @click="free">Free</a>
+            <a
+              v-if="
+                store.getters['options/getOptionValue']('enableDebugFeatures')
+              "
+              class="dropdown-item"
+              href="#"
+              @click="inspect"
+              >Inspect in console</a
+            >
           </li>
         </ul>
       </div>
@@ -40,7 +49,7 @@
 </template>
 
 <script setup>
-import { computed, defineProps, inject } from "vue";
+import { computed, defineProps, inject, toRaw } from "vue";
 import { useStore } from "vuex";
 import ChatMessageBody from "@/chat/components/ChatMessageBody";
 
@@ -51,6 +60,10 @@ const settings = computed(() => store.state.settings);
 const props = defineProps({
   msg: Object,
 });
+
+function inspect() {
+  console.log(toRaw(props.msg));
+}
 
 function ban() {
   if (
