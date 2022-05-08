@@ -38,9 +38,11 @@
         <tr
           v-for="ranker in rankers"
           :key="ranker.accountId"
+          class="in-ladder-row"
           :class="[
             ranker.you ? 'you' : '',
             ranker.growing || ranker.you ? '' : 'promoted',
+            rankerEtaClass(ranker),
           ]"
         >
           <td class="text-start">
@@ -66,6 +68,7 @@
 <script setup>
 import { useStore } from "vuex";
 import { computed, inject } from "vue";
+import { eta } from "../../modules/eta";
 import PaginationGroup from "@/components/PaginationGroup";
 
 const store = useStore();
@@ -76,6 +79,31 @@ const ladder = computed(() => store.state.ladder.ladder);
 const user = computed(() => store.state.user);
 const settings = computed(() => store.state.settings);
 const rankers = computed(() => store.getters["ladder/shownRankers"]);
+const yourRanker = computed(() => ladder.value.yourRanker);
+
+const rankerEtaClass = (ranker) => {
+  const theirETAToFirst = eta(ranker).toFirst();
+  const yourETAToFirst = eta(yourRanker.value).toFirst();
+  //const theirETAToYou = eta(yourRanker.value).toRanker(ranker);
+
+  if (!ranker.growing) {
+    return "";
+  }
+
+  if (theirETAToFirst < yourETAToFirst + 29) {
+    if (theirETAToFirst < yourETAToFirst) {
+      return "redish"; //they will be first to first
+    }
+    return "orangeish"; //they will be second to first but will overtake you befor the 30 second mark for manual promote
+  }
+  if (yourETAToFirst < theirETAToFirst) {
+    if (yourETAToFirst + 31 < theirETAToFirst) {
+      return "greenish"; //you will be first to first and have time to manually promote
+    }
+    return "orangeish"; //they will be second to first but will overtake you befor the 30 second mark for manual promote
+  }
+  return "";
+};
 
 function changeLadder(event) {
   const targetLadder = event.target.dataset.number;
@@ -115,6 +143,18 @@ function changeLadder(event) {
 
   tbody {
     overflow: auto;
+  }
+}
+
+tr.in-ladder-row {
+  &.greenish {
+    background-color: rgba($color: green, $alpha: 0.2);
+  }
+  &.redish {
+    background-color: rgba($color: red, $alpha: 0.2);
+  }
+  &.orangeish {
+    background-color: rgba($color: orange, $alpha: 0.2);
   }
 }
 
